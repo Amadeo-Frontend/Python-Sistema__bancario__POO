@@ -32,8 +32,25 @@ As classes `Saque` e `Deposito` são subclasse de `Transacao`, que representam t
 
 O programa principal está no arquivo `desafio_v2.py`. Basta executá-lo para interagir com o sistema bancário através de um menu interativo no terminal.
 
-## Dependências 📦
+##  Dependências 🔧
 
-Este projeto utiliza a biblioteca Colorama para adicionar cores ao terminal e a biblioteca Emoji para adicionar emojis às mensagens de saída.
+Este projeto utiliza a biblioteca `colorama` para adicionar cores ao terminal. Para instalar essa biblioteca, execute o seguinte comando no terminal:
 
-Para instalar as dependências, execute o seguinte comando:
+```
+pip install colorama
+```
+
+##  Contribuição 🧾
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para
+sugestões, reportar bugs ou propor melhorias. Se deseja contribuir diretamente,
+faça um fork do repositório, crie uma branch para suas modificações e abra um
+pull request.
+
+##  Suporte 💻
+
+Se você encontrar algum problema ou tiver dúvidas sobre o uso deste projeto, por
+favor, abra um issue para discussão.
+
+Feito com ❤️ por Amadeo Bon para contribuir com a comunidade de desenvolvimento
+Python. Boa codificação!
