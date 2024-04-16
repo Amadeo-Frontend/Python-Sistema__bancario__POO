@@ -2,6 +2,14 @@
 
 Este projeto é um sistema bancário desenvolvido em Python utilizando Programação Orientada a Objetos (POO). O sistema inclui classes para representar clientes, contas bancárias, transações e histórico.
 
+## ▶ Demonstração
+
+
+
+https://github.com/Amadeo-Frontend/Python-Sistema__bancario__POO/assets/104178969/565e70ed-2490-4eb4-be91-57855aa1b509
+
+
+
 ## Funcionalidades 🛠️
 
 ### Cliente 👤
