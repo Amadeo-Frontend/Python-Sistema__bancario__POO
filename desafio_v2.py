@@ -310,13 +310,11 @@ def criar_conta(numero_conta, clientes, contas):
 
     print(Fore.GREEN + "\n✅✅✅ Conta criada com sucesso! ✅✅✅")
     print(Style.RESET_ALL)  # Resetando a cor
-
-
+       
 def listar_contas(contas):
     for conta in contas:
-        print("=" * 100)
-        print(textwrap.dedent(str(conta)))
-
+        print(Fore.CYAN + "=" * 100)
+        print(Fore.YELLOW + str(conta) + Style.RESET_ALL)
 
 def main():
     clientes = []
