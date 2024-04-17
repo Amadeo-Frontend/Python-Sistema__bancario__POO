@@ -4,11 +4,7 @@ Este projeto é um sistema bancário desenvolvido em Python utilizando Programa�
 
 ## ▶ Demonstração
 
-
-
-https://github.com/Amadeo-Frontend/Python-Sistema__bancario__POO/assets/104178969/565e70ed-2490-4eb4-be91-57855aa1b509
-
-
+<https://github.com/Amadeo-Frontend/Python-Sistema__bancario__POO/assets/104178969/565e70ed-2490-4eb4-be91-57855aa1b509>
 
 ## Funcionalidades 🛠️
 
@@ -36,11 +32,15 @@ A classe abstrata `Transacao` representa uma transação bancária. Possui méto
 
 As classes `Saque` e `Deposito` são subclasse de `Transacao`, que representam transações de saque e depósito, respectivamente. Elas implementam os métodos abstratos de `Transacao`.
 
+### Data e Hora 🕐
+
+O projeto utiliza uma implementação robusta de data e hora, que não apenas registra transações com precisão, mas também apresenta essas informações de forma clara e organizada, permitindo aos usuários uma compreensão instantânea das atividades em suas contas
+
 ## Uso 🚀
 
 O programa principal está no arquivo `desafio_v2.py`. Basta executá-lo para interagir com o sistema bancário através de um menu interativo no terminal.
 
-##  Dependências 🔧
+## Dependências 🔧
 
 Este projeto utiliza a biblioteca `colorama` para adicionar cores ao terminal. Para instalar essa biblioteca, execute o seguinte comando no terminal:
 
@@ -48,14 +48,14 @@ Este projeto utiliza a biblioteca `colorama` para adicionar cores ao terminal. P
 pip install colorama
 ```
 
-##  Contribuição 🧾
+## Contribuição 🧾
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para
 sugestões, reportar bugs ou propor melhorias. Se deseja contribuir diretamente,
 faça um fork do repositório, crie uma branch para suas modificações e abra um
 pull request.
 
-##  Suporte 💻
+## Suporte 💻
 
 Se você encontrar algum problema ou tiver dúvidas sobre o uso deste projeto, por
 favor, abra um issue para discussão.
