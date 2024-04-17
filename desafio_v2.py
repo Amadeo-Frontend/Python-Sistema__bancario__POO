@@ -135,7 +135,10 @@ class Conta:
 
         elif valor > 0:
             self._saldo -= valor
-            print(Fore.GREEN + "\n✅✅✅ Saque realizado com sucesso! ✅✅✅")
+            print(
+                Fore.GREEN
+                + f"\n✅✅✅ Saque realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
             return True
 
@@ -151,7 +154,10 @@ class Conta:
     def depositar(self, valor):
         if valor > 0:
             self._saldo += valor
-            print(Fore.GREEN + "\n✅✅✅ Depósito realizado com sucesso! ✅✅✅")
+            print(
+                Fore.GREEN
+                + f"\n✅✅✅ Depósito realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
         else:
             print(
@@ -300,7 +306,6 @@ def exibir_extrato(clientes):
         for transacao in transacoes:
             tipo_transacao = transacao["tipo"]
             texto_formatado = f"\n{Fore.YELLOW}{tipo_transacao} ({transacao['data']}):\n\tR$ {transacao['valor']:.2f}{Style.RESET_ALL}"
-
             # Verificar se a transação é um saque e alterar a cor do texto para vermelho
             if tipo_transacao == "Saque":
                 texto_formatado = f"{Fore.RED}{texto_formatado}{Style.RESET_ALL}"
@@ -333,7 +338,10 @@ def criar_cliente(clientes):
 
     clientes.append(cliente)
 
-    print(Fore.GREEN + "\n✅✅✅ Cliente criado com sucesso! ✅✅✅")
+    print(
+        Fore.GREEN
+        + f"\n✅✅✅ Cliente criado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+    )
     print(Style.RESET_ALL)  # Resetando a cor
 
 
@@ -353,7 +361,10 @@ def criar_conta(numero_conta, clientes, contas):
     contas.append(conta)
     cliente.contas.append(conta)
 
-    print(Fore.GREEN + "\n✅✅✅ Conta criada com sucesso! ✅✅✅")
+    print(
+        Fore.GREEN
+        + f"\n✅✅✅ Conta criada com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+    )
     print(Style.RESET_ALL)  # Resetando a cor
 
 
