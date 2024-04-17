@@ -25,7 +25,6 @@ class Saque(Transacao):
 
     def registrar(self, conta):
         sucesso_transacao = conta.sacar(self.valor)
-
         if sucesso_transacao:
             conta.historico.adicionar_transacao(self)
 
@@ -40,7 +39,6 @@ class Deposito(Transacao):
 
     def registrar(self, conta):
         sucesso_transacao = conta.depositar(self.valor)
-
         if sucesso_transacao:
             conta.historico.adicionar_transacao(self)
 
@@ -59,7 +57,6 @@ class Historico:
         valor_transacao = transacao.valor
 
         registro_transacao = f"{Fore.CYAN}Tipo: {tipo_transacao} | Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}{Style.RESET_ALL}"
-
         self._transacoes.append(
             {
                 "tipo": tipo_transacao,
@@ -132,34 +129,9 @@ class Conta:
                 + "\n❌❌❌ Operação falhou! Você não tem saldo suficiente. ❌❌❌"
             )
             print(Style.RESET_ALL)  # Resetando a cor
+            return False
 
-        elif valor > 0:
-            self._saldo -= valor
-            print(
-                Fore.GREEN
-                + f"\n✅✅✅ Saque realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
-            )
-            print(Style.RESET_ALL)  # Resetando a cor
-            return True
-
-        else:
-            print(
-                Fore.RED
-                + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌"
-            )
-            print(Style.RESET_ALL)  # Resetando a cor
-
-        return False
-
-    def depositar(self, valor):
-        if valor > 0:
-            self._saldo += valor
-            print(
-                Fore.GREEN
-                + f"\n✅✅✅ Depósito realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
-            )
-            print(Style.RESET_ALL)  # Resetando a cor
-        else:
+        elif valor <= 0:
             print(
                 Fore.RED
                 + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌"
@@ -167,6 +139,29 @@ class Conta:
             print(Style.RESET_ALL)  # Resetando a cor
             return False
 
+        self._saldo -= valor
+        print(
+            Fore.GREEN
+            + f"\n✅✅✅ Saque realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+        )
+        print(Style.RESET_ALL)  # Resetando a cor
+        return True
+
+    def depositar(self, valor):
+        if valor <= 0:
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌"
+            )
+            print(Style.RESET_ALL)  # Resetando a cor
+            return False
+
+        self._saldo += valor
+        print(
+            Fore.GREEN
+            + f"\n✅✅✅ Depósito realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+        )
+        print(Style.RESET_ALL)  # Resetando a cor
         return True
 
 
@@ -177,14 +172,11 @@ class ContaCorrente(Conta):
         self._limite_saques = limite_saques
 
     def sacar(self, valor):
-        numero_saques = len(
-            [
-                transacao
-                for transacao in self.historico.transacoes
-                if transacao["tipo"] == Saque.__name__
-            ]
+        numero_saques = sum(
+            1
+            for transacao in self.historico.transacoes
+            if transacao["tipo"] == Saque.__name__
         )
-
         excedeu_limite = valor > self._limite
         excedeu_saques = numero_saques >= self._limite_saques
 
@@ -194,30 +186,29 @@ class ContaCorrente(Conta):
                 + "\n❌❌❌ Operação falhou! O valor do saque excede o limite. ❌❌❌"
             )
             print(Style.RESET_ALL)  # Resetando a cor
+            return False
+
         elif excedeu_saques:
             print(
                 Fore.RED
                 + "\n❌❌❌ Operação falhou! Número máximo de saques excedido. ❌❌❌"
             )
             print(Style.RESET_ALL)  # Resetando a cor
-        else:
-            return super().sacar(valor)
+            return False
 
-        return False
+        return super().sacar(valor)
 
     def __str__(self):
-        return f"""\
-    {Fore.CYAN}
+        return f"""{Fore.CYAN}
     ========== CONTA CORRENTE ==========
             Agência:\t{self.agencia}
             C/C:\t{self.numero}
             Titular:\t{self.cliente.nome}
-    {Style.RESET_ALL}
-    """
+    {Style.RESET_ALL}"""
 
 
 def menu():
-    menu = f"""{Fore.CYAN + Style.BRIGHT}
+    menu_text = f"""{Fore.CYAN + Style.BRIGHT}
     ================ MENU ================
     [d]💰\tDepositar
     [s]💸\tSacar
@@ -227,7 +218,7 @@ def menu():
     [lc]📄\tListar contas
     [q]🚪\tSair
     => {Style.RESET_ALL}"""
-    return input(textwrap.dedent(menu))
+    return input(textwrap.dedent(menu_text))
 
 
 def filtrar_cliente(cpf, clientes):
@@ -411,4 +402,5 @@ def main():
             print(Style.RESET_ALL)  # Resetando a cor
 
 
-main()
+if __name__ == "__main__":
+    main()
