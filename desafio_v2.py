@@ -3,6 +3,73 @@ from abc import ABC, abstractclassmethod, abstractproperty
 from datetime import datetime
 from colorama import Fore, Style
 
+
+class Transacao(ABC):
+    @property
+    @abstractproperty
+    def valor(self):
+        pass
+
+    @abstractclassmethod
+    def registrar(self, conta):
+        pass
+
+
+class Saque(Transacao):
+    def __init__(self, valor):
+        self._valor = valor
+
+    @property
+    def valor(self):
+        return self._valor
+
+    def registrar(self, conta):
+        sucesso_transacao = conta.sacar(self.valor)
+
+        if sucesso_transacao:
+            conta.historico.adicionar_transacao(self)
+
+
+class Deposito(Transacao):
+    def __init__(self, valor):
+        self._valor = valor
+
+    @property
+    def valor(self):
+        return self._valor
+
+    def registrar(self, conta):
+        sucesso_transacao = conta.depositar(self.valor)
+
+        if sucesso_transacao:
+            conta.historico.adicionar_transacao(self)
+
+
+class Historico:
+    def __init__(self):
+        self._transacoes = []
+
+    @property
+    def transacoes(self):
+        return self._transacoes
+
+    def adicionar_transacao(self, transacao):
+        data_hora = datetime.now().strftime("%d-%m-%Y %H:%M")
+        tipo_transacao = transacao.__class__.__name__
+        valor_transacao = transacao.valor
+
+        registro_transacao = f"{Fore.CYAN}Tipo: {tipo_transacao} | Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}{Style.RESET_ALL}"
+
+        self._transacoes.append(
+            {
+                "tipo": tipo_transacao,
+                "valor": valor_transacao,
+                "data": data_hora,
+                "registro": registro_transacao,
+            }
+        )
+
+
 class Cliente:
     def __init__(self, endereco):
         self.endereco = endereco
@@ -60,7 +127,10 @@ class Conta:
         excedeu_saldo = valor > saldo
 
         if excedeu_saldo:
-            print(Fore.RED + "\n❌❌❌ Operação falhou! Você não tem saldo suficiente. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! Você não tem saldo suficiente. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
 
         elif valor > 0:
@@ -70,7 +140,10 @@ class Conta:
             return True
 
         else:
-            print(Fore.RED + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
 
         return False
@@ -81,7 +154,10 @@ class Conta:
             print(Fore.GREEN + "\n✅✅✅ Depósito realizado com sucesso! ✅✅✅")
             print(Style.RESET_ALL)  # Resetando a cor
         else:
-            print(Fore.RED + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! O valor informado é inválido. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
             return False
 
@@ -96,17 +172,27 @@ class ContaCorrente(Conta):
 
     def sacar(self, valor):
         numero_saques = len(
-            [transacao for transacao in self.historico.transacoes if transacao["tipo"] == Saque.__name__]
+            [
+                transacao
+                for transacao in self.historico.transacoes
+                if transacao["tipo"] == Saque.__name__
+            ]
         )
 
         excedeu_limite = valor > self._limite
         excedeu_saques = numero_saques >= self._limite_saques
 
         if excedeu_limite:
-            print(Fore.RED + "\n❌❌❌ Operação falhou! O valor do saque excede o limite. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! O valor do saque excede o limite. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
         elif excedeu_saques:
-            print(Fore.RED + "\n❌❌❌ Operação falhou! Número máximo de saques excedido. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação falhou! Número máximo de saques excedido. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
         else:
             return super().sacar(valor)
@@ -115,69 +201,13 @@ class ContaCorrente(Conta):
 
     def __str__(self):
         return f"""\
+    {Fore.CYAN}
+    ========== CONTA CORRENTE ==========
             Agência:\t{self.agencia}
-            C/C:\t\t{self.numero}
+            C/C:\t{self.numero}
             Titular:\t{self.cliente.nome}
-        """
-
-
-class Historico:
-    def __init__(self):
-        self._transacoes = []
-
-    @property
-    def transacoes(self):
-        return self._transacoes
-
-    def adicionar_transacao(self, transacao):
-        self._transacoes.append(
-            {
-                "tipo": transacao.__class__.__name__,
-                "valor": transacao.valor,
-                "data": datetime.now().strftime("%d-%m-%Y %H:%M"),
-            }
-        )
-
-
-class Transacao(ABC):
-    @property
-    @abstractproperty
-    def valor(self):
-        pass
-
-    @abstractclassmethod
-    def registrar(self, conta):
-        pass
-
-
-class Saque(Transacao):
-    def __init__(self, valor):
-        self._valor = valor
-
-    @property
-    def valor(self):
-        return self._valor
-
-    def registrar(self, conta):
-        sucesso_transacao = conta.sacar(self.valor)
-
-        if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
-
-
-class Deposito(Transacao):
-    def __init__(self, valor):
-        self._valor = valor
-
-    @property
-    def valor(self):
-        return self._valor
-
-    def registrar(self, conta):
-        sucesso_transacao = conta.depositar(self.valor)
-
-        if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
+    {Style.RESET_ALL}
+    """
 
 
 def menu():
@@ -246,6 +276,7 @@ def sacar(clientes):
 
     cliente.realizar_transacao(conta, transacao)
 
+
 def exibir_extrato(clientes):
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_cliente(cpf, clientes)
@@ -267,7 +298,14 @@ def exibir_extrato(clientes):
         extrato = "Não foram realizadas movimentações."
     else:
         for transacao in transacoes:
-            extrato += f"\n{Fore.YELLOW}{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f}{Style.RESET_ALL}"
+            tipo_transacao = transacao["tipo"]
+            texto_formatado = f"\n{Fore.YELLOW}{tipo_transacao} ({transacao['data']}):\n\tR$ {transacao['valor']:.2f}{Style.RESET_ALL}"
+
+            # Verificar se a transação é um saque e alterar a cor do texto para vermelho
+            if tipo_transacao == "Saque":
+                texto_formatado = f"{Fore.RED}{texto_formatado}{Style.RESET_ALL}"
+
+            extrato += texto_formatado
 
     print(extrato)
     print(f"\n{Fore.CYAN}Saldo:\n\tR$ {conta.saldo:.2f}{Style.RESET_ALL}")
@@ -285,9 +323,13 @@ def criar_cliente(clientes):
 
     nome = input("Informe o nome completo: ")
     data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
-    endereco = input("Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
+    endereco = input(
+        "Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): "
+    )
 
-    cliente = PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
+    cliente = PessoaFisica(
+        nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco
+    )
 
     clientes.append(cliente)
 
@@ -300,7 +342,10 @@ def criar_conta(numero_conta, clientes, contas):
     cliente = filtrar_cliente(cpf, clientes)
 
     if not cliente:
-        print(Fore.RED + "\n❌❌❌ Cliente não encontrado, fluxo de criação de conta encerrado! ❌❌❌")
+        print(
+            Fore.RED
+            + "\n❌❌❌ Cliente não encontrado, fluxo de criação de conta encerrado! ❌❌❌"
+        )
         print(Style.RESET_ALL)  # Resetando a cor
         return
 
@@ -310,11 +355,13 @@ def criar_conta(numero_conta, clientes, contas):
 
     print(Fore.GREEN + "\n✅✅✅ Conta criada com sucesso! ✅✅✅")
     print(Style.RESET_ALL)  # Resetando a cor
-       
+
+
 def listar_contas(contas):
     for conta in contas:
         print(Fore.CYAN + "=" * 100)
         print(Fore.YELLOW + str(conta) + Style.RESET_ALL)
+
 
 def main():
     clientes = []
@@ -346,7 +393,10 @@ def main():
             break
 
         else:
-            print(Fore.RED + "\n❌❌❌ Operação inválida, por favor selecione novamente a operação desejada. ❌❌❌")
+            print(
+                Fore.RED
+                + "\n❌❌❌ Operação inválida, por favor selecione novamente a operação desejada. ❌❌❌"
+            )
             print(Style.RESET_ALL)  # Resetando a cor
 
 
