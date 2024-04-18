@@ -2,6 +2,17 @@ import textwrap
 from abc import ABC, abstractclassmethod, abstractproperty
 from datetime import datetime
 from colorama import Fore, Style
+import logging
+
+
+# Configurações do logger para escrever em um arquivo .txt
+logging.basicConfig(
+    filename="C:\\Users\\Usuário\\Desktop\\Dio\\bootcamp-vivo-python\\sistema-bancaro-POO\\log.txt",
+    filemode="a",
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
 
 
 class Transacao(ABC):
@@ -11,7 +22,7 @@ class Transacao(ABC):
         pass
 
     @abstractclassmethod
-    def registrar(self, conta):
+    def registrar(cls, conta):
         pass
 
 
@@ -26,7 +37,7 @@ class Saque(Transacao):
     def registrar(self, conta):
         sucesso_transacao = conta.sacar(self.valor)
         if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
+            conta.historico.adicionar_transacao(self, conta)
 
 
 class Deposito(Transacao):
@@ -40,7 +51,7 @@ class Deposito(Transacao):
     def registrar(self, conta):
         sucesso_transacao = conta.depositar(self.valor)
         if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
+            conta.historico.adicionar_transacao(self, conta)
 
 
 class Historico:
@@ -51,14 +62,36 @@ class Historico:
     def transacoes(self):
         return self._transacoes
 
-    def adicionar_transacao(self, transacao):
-        data_hora = datetime.now().strftime("%d-%m-%Y %H:%M")
+    def adicionar_transacao(self, transacao, conta):
+        data_hora = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
         tipo_transacao = transacao.__class__.__name__
         valor_transacao = transacao.valor
+        numero_conta = conta.numero
 
-        registro_transacao = f"{Fore.CYAN}Tipo: {tipo_transacao} | Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}{Style.RESET_ALL}"
+        # Verificar se a transação já foi adicionada anteriormente
+        for t in self._transacoes:
+            if (
+                t["conta"] == numero_conta
+                and t["tipo"] == tipo_transacao
+                and t["valor"] == valor_transacao
+            ):
+                return
+
+        # Registro da transação no arquivo .txt
+        with open("log.txt", "a") as file:
+            file.write(
+                f"Conta: {numero_conta} | Tipo: {tipo_transacao} | "
+                f"Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}\n"
+            )
+
+        registro_transacao = (
+            f"{Fore.CYAN}Conta: {numero_conta} | Tipo: {tipo_transacao} | "
+            f"Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}"
+            f"{Style.RESET_ALL}"
+        )
         self._transacoes.append(
             {
+                "conta": numero_conta,
                 "tipo": tipo_transacao,
                 "valor": valor_transacao,
                 "data": data_hora,
@@ -74,6 +107,7 @@ class Cliente:
 
     def realizar_transacao(self, conta, transacao):
         transacao.registrar(conta)
+        conta.historico.adicionar_transacao(transacao, conta)
 
     def adicionar_conta(self, conta):
         self.contas.append(conta)
@@ -83,8 +117,24 @@ class PessoaFisica(Cliente):
     def __init__(self, nome, data_nascimento, cpf, endereco):
         super().__init__(endereco)
         self.nome = nome
-        self.data_nascimento = data_nascimento
         self.cpf = cpf
+
+        while True:
+            try:
+                data_nascimento_dt = datetime.strptime(data_nascimento, "%d-%m-%Y")
+                data_atual = datetime.now()
+                if data_nascimento_dt > data_atual:
+                    raise ValueError(
+                        "❌ Data de nascimento não pode ser maior que a data atual. ❌"
+                    )
+                else:
+                    self.data_nascimento = data_nascimento
+                    break
+            except ValueError as e:
+                print(e)
+                data_nascimento = input(
+                    "Informe uma nova data de nascimento (dd-mm-aaaa): "
+                )
 
 
 class Conta:
@@ -142,7 +192,7 @@ class Conta:
         self._saldo -= valor
         print(
             Fore.GREEN
-            + f"\n✅✅✅ Saque realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+            + f"\n✅✅✅ Saque realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
         )
         print(Style.RESET_ALL)  # Resetando a cor
         return True
@@ -159,7 +209,7 @@ class Conta:
         self._saldo += valor
         print(
             Fore.GREEN
-            + f"\n✅✅✅ Depósito realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+            + f"\n✅✅✅ Depósito realizado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
         )
         print(Style.RESET_ALL)  # Resetando a cor
         return True
@@ -296,10 +346,14 @@ def exibir_extrato(clientes):
     else:
         for transacao in transacoes:
             tipo_transacao = transacao["tipo"]
-            texto_formatado = f"\n{Fore.YELLOW}{tipo_transacao} ({transacao['data']}):\n\tR$ {transacao['valor']:.2f}{Style.RESET_ALL}"
-            # Verificar se a transação é um saque e alterar a cor do texto para vermelho
+            texto_formatado = f"\n{tipo_transacao} ({transacao['data']}):\n\tR$ {transacao['valor']:.2f}\n"
+
+            # Aplicar cor vermelha se for um saque
             if tipo_transacao == "Saque":
                 texto_formatado = f"{Fore.RED}{texto_formatado}{Style.RESET_ALL}"
+                # Aplicar cor amarela se for um depósito
+            elif tipo_transacao == "Deposito":
+                texto_formatado = f"{Fore.YELLOW}{texto_formatado}{Style.RESET_ALL}"
 
             extrato += texto_formatado
 
@@ -309,7 +363,7 @@ def exibir_extrato(clientes):
 
 
 def criar_cliente(clientes):
-    cpf = input("Informe o CPF (somente número): ")
+    cpf = input("Informe o CPF (somente números): ")
     cliente = filtrar_cliente(cpf, clientes)
 
     if cliente:
@@ -318,20 +372,35 @@ def criar_cliente(clientes):
         return
 
     nome = input("Informe o nome completo: ")
-    data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
+
+    while True:
+        data_nascimento = input("Informe a data de nascimento (dd/mm/aaaa): ")
+        try:
+            data_nascimento_dt = datetime.strptime(data_nascimento, "%d/%m/%Y")
+            break
+        except ValueError:
+            print(
+                Fore.RED
+                + "\n❌❌❌ Formato de data inválido! Por favor, digite no formato dd/mm/aaaa. ❌❌❌"
+            )
+            print(Style.RESET_ALL)  # Resetando a cor
+
     endereco = input(
         "Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): "
     )
 
+    # Convertendo a data de nascimento para o formato correto
+    data_nascimento_formatada = data_nascimento_dt.strftime("%d-%m-%Y")
+
     cliente = PessoaFisica(
-        nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco
+        nome=nome, data_nascimento=data_nascimento_formatada, cpf=cpf, endereco=endereco
     )
 
     clientes.append(cliente)
 
     print(
         Fore.GREEN
-        + f"\n✅✅✅ Cliente criado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+        + f"\n✅✅✅ Cliente criado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
     )
     print(Style.RESET_ALL)  # Resetando a cor
 
@@ -354,7 +423,7 @@ def criar_conta(numero_conta, clientes, contas):
 
     print(
         Fore.GREEN
-        + f"\n✅✅✅ Conta criada com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M')} ✅✅✅"
+        + f"\n✅✅✅ Conta criada com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
     )
     print(Style.RESET_ALL)  # Resetando a cor
 
