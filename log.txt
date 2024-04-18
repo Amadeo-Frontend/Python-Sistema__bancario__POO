@@ -1,8 +1,4 @@
-
-
-Cliente criado: eve | CPF: 1 | (18-04-2024 20:00:22)
-Nova conta criada para o cliente eve | Conta: 1 | (18-04-2024 20:00:27)
-Conta: 1 | Tipo: Deposito | Valor: R$ 500.00 | (18-04-2024 20:00:40)
-Conta: 1 | Tipo: Saque | Valor: R$ 20.00 | (18-04-2024 20:00:45)
-Cliente criado: asa | CPF: 2 | (18-04-2024 20:01:29)
-Nova conta criada para o cliente asa | Conta: 2 | (18-04-2024 20:01:33)
+Cliente criado: amadeo bon | CPF: 1 | (18-04-2024 20:39:32)
+Nova conta criada para o cliente amadeo bon | Conta: 1 | (18-04-2024 20:39:37)
+Conta: 1 | Tipo: Deposito | Valor: R$ 500.00 | (18-04-2024 20:39:43)
+Conta: 1 | Tipo: Saque | Valor: R$ 50.00 | (18-04-2024 20:39:51)
