@@ -6,7 +6,11 @@ Este projeto é um sistema bancário desenvolvido em Python utilizando Programa�
 
 
 
-https://github.com/Amadeo-Frontend/Python-Sistema__bancario__POO/assets/104178969/bece0fd2-7d62-4df7-b3ff-d583857d4eb5
+
+
+https://github.com/Amadeo-Frontend/Python-Sistema__bancario__POO/assets/104178969/83289e81-5f0d-4b43-b4c9-34e8a9f44afe
+
+
 
 
 
