@@ -4,7 +4,6 @@ from datetime import datetime
 from colorama import Fore, Style
 import logging
 
-
 # Configurações do logger para escrever em um arquivo .txt
 logging.basicConfig(
     filename="C:\\Users\\Usuário\\Desktop\\Dio\\bootcamp-vivo-python\\sistema-bancaro-POO\\log.txt",
@@ -81,12 +80,12 @@ class Historico:
         with open("log.txt", "a") as file:
             file.write(
                 f"Conta: {numero_conta} | Tipo: {tipo_transacao} | "
-                f"Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}\n"
+                f"Valor: R$ {valor_transacao:.2f} | ({data_hora})\n"
             )
 
         registro_transacao = (
             f"{Fore.CYAN}Conta: {numero_conta} | Tipo: {tipo_transacao} | "
-            f"Valor: R$ {valor_transacao:.2f} | Data e Hora: {data_hora}"
+            f"Valor: R$ {valor_transacao:.2f} | ({data_hora})"
             f"{Style.RESET_ALL}"
         )
         self._transacoes.append(
@@ -135,6 +134,9 @@ class PessoaFisica(Cliente):
                 data_nascimento = input(
                     "Informe uma nova data de nascimento (dd-mm-aaaa): "
                 )
+
+    def __repr__(self):
+        return f"PessoaFisica(nome={self.nome}, cpf={self.cpf}, data_nascimento={self.data_nascimento}, endereco={self.endereco})"
 
 
 class Conta:
@@ -249,7 +251,7 @@ class ContaCorrente(Conta):
         return super().sacar(valor)
 
     def __str__(self):
-        return f"""{Fore.CYAN}
+        return f"""{Fore.WHITE}
     ========== CONTA CORRENTE ==========
             Agência:\t{self.agencia}
             C/C:\t{self.numero}
@@ -351,7 +353,7 @@ def exibir_extrato(clientes):
             # Aplicar cor vermelha se for um saque
             if tipo_transacao == "Saque":
                 texto_formatado = f"{Fore.RED}{texto_formatado}{Style.RESET_ALL}"
-                # Aplicar cor amarela se for um depósito
+            # Aplicar cor amarela se for um depósito
             elif tipo_transacao == "Deposito":
                 texto_formatado = f"{Fore.YELLOW}{texto_formatado}{Style.RESET_ALL}"
 
@@ -398,10 +400,12 @@ def criar_cliente(clientes):
 
     clientes.append(cliente)
 
-    print(
-        Fore.GREEN
-        + f"\n✅✅✅ Cliente criado com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
-    )
+    # Registro da criação do novo cliente no arquivo .txt
+    data_hora = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    with open("log.txt", "a") as file:
+        file.write(f"Cliente criado: {nome} | CPF: {cpf} | ({data_hora})\n")
+
+    print(Fore.GREEN + f"\n✅✅✅ Cliente criado com sucesso! {data_hora} ✅✅✅")
     print(Style.RESET_ALL)  # Resetando a cor
 
 
@@ -421,10 +425,14 @@ def criar_conta(numero_conta, clientes, contas):
     contas.append(conta)
     cliente.contas.append(conta)
 
-    print(
-        Fore.GREEN
-        + f"\n✅✅✅ Conta criada com sucesso! {datetime.now().strftime('%d-%m-%Y %H:%M:%S')} ✅✅✅"
-    )
+    # Registro da criação da nova conta no arquivo .txt
+    data_hora = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    with open("log.txt", "a") as file:
+        file.write(
+            f"Nova conta criada para o cliente {cliente.nome} | Conta: {numero_conta} | ({data_hora})\n"
+        )
+
+    print(Fore.GREEN + f"\n✅✅✅ Conta criada com sucesso! {data_hora} ✅✅✅")
     print(Style.RESET_ALL)  # Resetando a cor
 
 

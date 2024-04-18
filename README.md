@@ -40,6 +40,10 @@ As classes `Saque` e `Deposito` são subclasse de `Transacao`, que representam t
 
 O projeto utiliza uma implementação robusta de data e hora, que não apenas registra transações com precisão, mas também apresenta essas informações de forma clara e organizada, permitindo aos usuários uma compreensão instantânea das atividades em suas contas
 
+### Implementação do Log e do log.txt 💾
+
+O projeto inclui uma funcionalidade de log para registrar eventos importantes, como a criação de novos clientes e contas. O log é feito utilizando o módulo logging do Python e é armazenado no arquivo log.txt. Cada registro no arquivo de log contém informações detalhadas, incluindo o tipo de operação realizada, o nome do cliente, o número da conta e a data e hora em que a operação ocorreu. Isso oferece uma forma organizada e fácil de rastrear as atividades dentro do sistema bancário, proporcionando transparência e controle sobre as operações realizadas.
+
 ## Uso 🚀
 
 O programa principal está no arquivo `desafio_v2.py`. Basta executá-lo para interagir com o sistema bancário através de um menu interativo no terminal.
